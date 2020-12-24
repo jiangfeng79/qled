@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "mytoolbutton.h"
-#include <QDebug>
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
-    // ui->mainToolBar->setFixedHeight(100);
+    ui->toolButton->setLedColor(QColor(248, 91, 26));
+    ui->toolButton_2->setLedColor(QColor(248, 91, 26));
+    ui->toolButton_3->setLedColor(QColor(248, 91, 26));
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerUpdate()) );
@@ -20,18 +20,22 @@ MainWindow::MainWindow(QWidget *parent) :
     qbutton->setLedColor(QColor(255,0,0,255));
     qbutton->setText("Demo Text");
     qbutton->setText2("Demo Text Below");
+    qbutton->setLedWidth(16);
     ui->mainToolBar->addWidget(qbutton);
 
     MyToolButton *button = new MyToolButton;
     button->setLedColor(QColor(Qt::green));
+    button->setLedWidth(24);
     ui->mainToolBar->addWidget(button);
 
     MyToolButton *button2 = new MyToolButton;
     button2->setLedColor(QColor(Qt::yellow));
+    button2->setLedWidth(32);
     ui->mainToolBar->addWidget(button2);
 
     MyToolButton *button3 = new MyToolButton;
     button3->setLedColor(QColor(Qt::gray));
+    button3->setLedWidth(64);
     ui->mainToolBar->addWidget(button3);
 }
 

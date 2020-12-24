@@ -2,12 +2,9 @@
 #include <QPainter>
 #include <QBrush>
 #include <QLinearGradient>
-#include <QDebug>
-#include <QThread>
-
 
 MyToolButton::MyToolButton(QWidget *parent)
-    : QToolButton(parent), iDir(1), m_ledColor(QColor(Qt::red)), m_label("label"), m_label2("label2")
+    : QToolButton(parent), m_ledColor(QColor(Qt::red)), m_label("label"), m_label2("label2"), iDir(1), m_Width(LED_WIDTH)
 {
 }
 
@@ -25,8 +22,12 @@ void MyToolButton::paintEvent(QPaintEvent * e)
     int textLength=l_qFontMetrics.width(" "+m_label+" ");
     int textLength2=l_qFontMetrics.width(" "+m_label2+" ");
 
-    textLength = textLength2>textLength?textLength2:textLength;
-    setFixedWidth(textLength+LED_WIDTH);
+    if(m_Width>=24)
+    {
+        textLength = textLength2>textLength?textLength2:textLength;
+    }
+    setFixedWidth(textLength+m_Width);
+    setFixedHeight(m_Width);
     drawLed(textLength);
 }
 
@@ -64,7 +65,7 @@ void MyToolButton::drawLed(int p_length)
     randColor();
     qreal l_margin = 4;
     qreal l_height = height()-l_margin;
-    QRadialGradient gradient(1+l_height/2, l_height/2+l_margin/2, 18);
+    QRadialGradient gradient(1+l_height/2, l_height/2+l_margin/2, m_Width*3/5);
 
     gradient.setColorAt(0.0, m_ledColor);
     gradient.setColorAt(0.2, m_ledColor);
@@ -73,22 +74,31 @@ void MyToolButton::drawLed(int p_length)
     painter.setPen( Qt::NoPen );
     painter.drawEllipse(1,static_cast<int>(l_margin/2),static_cast<int>(l_height),static_cast<int>(l_height));
 
-    qreal l_highlight = 12;
-    QRadialGradient radGrad(1+l_height/2,l_height/2+l_margin/2-8, 7);
+    qreal l_highlight = m_Width*2/5;
+    QRadialGradient radGrad(1+l_height/2,l_height/2+l_margin/2-m_Width/4, m_Width/4);
 
     radGrad.setColorAt(0.0, Qt::white);
     radGrad.setColorAt(1.0, m_ledColor);
     painter.setBrush(radGrad);
     painter.setPen(Qt::NoPen);
-    painter.drawEllipse(static_cast<int>(1+l_height/2-l_highlight/2),static_cast<int>(l_height/2-l_highlight/2+l_margin/2-4),static_cast<int>(l_highlight),static_cast<int>(l_highlight-4));
+    painter.drawEllipse(static_cast<int>(1+l_height/2-l_highlight/2),static_cast<int>(l_height/2-l_highlight/2+l_margin/2-m_Width/8),static_cast<int>(l_highlight),static_cast<int>(l_highlight-m_Width/8));
 
 
-    painter.setPen(m_ledColor);
-    QRect rect(LED_WIDTH,0,p_length,height()/2);
-    painter.drawText(rect,Qt::AlignLeft," "+m_label+" ");
+    if(m_Width < 24)
+    {
+        painter.setPen(m_ledColor);
+        QRect rect(m_Width,0,p_length,height());
+        painter.drawText(rect,Qt::AlignLeft | Qt::AlignVCenter," "+m_label+" ");
+    }
+    else
+    {
+        painter.setPen(m_ledColor);
+        QRect rect(m_Width,0,p_length,height()/2);
+        painter.drawText(rect,Qt::AlignLeft | Qt::AlignVCenter," "+m_label+" ");
 
-    QRect rect2(LED_WIDTH,height()/2,p_length,height()/2);
-    painter.drawText(rect2,Qt::AlignLeft," "+m_label2+" ");
+        QRect rect2(m_Width,height()/2,p_length,height()/2);
+        painter.drawText(rect2,Qt::AlignLeft | Qt::AlignVCenter," "+m_label2+" ");
+    }
 }
 
 
